@@ -1,25 +1,13 @@
 /*
  COMP 1000 - Luka Miletic 49055267
- Title - Kirb floating simulator 2D
+ Title - Kirb Hopper Syndrome
  
- How to use;
- WASD - use wasd to move the kirb thingy around, W makes kirbs velocity go up, A makes kirbs velocity go left, S makes kirb go right, and D makes kirb go down
- Any key press - challenge yourself by keeping the mouse on kirb while it bounces around the screen to get the really cool blue kirby... if key is pressed and mouse isnt on kirb he turns angry/red
- Mouse clicked - Pushes kirb away from the mouse (not nice) and makes him raise his hands also used as a reset if kirb getting a bit too fast
- 
- Enjoy
  
  */
 
-float xKirb, yKirb, xDirection, yDirection, speedKirb, angleKirb, spinKirb;
+float xKirb, yKirb, xDirection, yDirection; 
+float angleKirb, spinKirb;
 color skinKirb, shoesKirb;
-
-int flashStart, flashDuration = 60;
-
-boolean WASD = false;
-boolean isFlashing = false;
-boolean armsUp = false;
-
 
 // Stars
 int numStars = 100;
@@ -29,16 +17,12 @@ float[] starBrightness = new float[numStars];
 float[] starSize = new float[numStars];
 float[] starSpeed = new float[numStars];
 
-// spaceships
-int numShips = 3;
-
 void setup() {
   size(1000, 1000);
   xKirb = width / 2;
   yKirb = height / 2;
   xDirection = random(-4, 4);
   yDirection = random(-4, 4);
-  speedKirb = 3;
   spinKirb = 2;
   angleKirb = 0;
   skinKirb = #E3ABB5;
@@ -55,14 +39,6 @@ void setup() {
 
 void draw() {
   background(0, 0, 40); // space background
-
-  // if hits wall emits flashing animation
-  if (isFlashing && millis() - flashStart < flashDuration) {
-    fill(255, 255, 255, 100);
-    rect(0, 0, width, height);
-  } else {
-    isFlashing = false;
-  }
 
   // moon wip
   stroke(255);
@@ -81,26 +57,6 @@ void draw() {
     ellipse(starX[i], starY[i], starSize[i], starSize[i]);
   }
 
-  // kirby movement
-  xKirb += xDirection * speedKirb;
-  yKirb += yDirection * speedKirb;
-
-  // bounce off walls
-  boolean hitWall = false;
-  if (xKirb > width - 50 || xKirb < 50) {
-    xDirection = -xDirection;
-    hitWall = true;
-  }
-  if (yKirb > height - 50 || yKirb < 50) {
-    yDirection = -yDirection;
-    hitWall = true;
-  }
-
-  if (hitWall && !isFlashing) {
-    isFlashing = true;
-    flashStart = millis();
-  }
-
   // game to make kirb blue by hovering mouse over it while moving if not goes red
   boolean mouseOver = dist(mouseX, mouseY, xKirb, yKirb) < 40;
   if (keyPressed) {
@@ -113,12 +69,6 @@ void draw() {
   }
 
   angleKirb += spinKirb;
-
-  drawKirby(xKirb, yKirb, angleKirb, armsUp, skinKirb, shoesKirb); // the 'void drawkirby' used ot be here before moved it to make it clearer would move stars too but wip
-
-
-
-  println("x:", xKirb, "y:", yKirb);
 }
 
 void drawKirby(float x, float y, float angle, boolean armsUpState, color skinKirb, color shoesKirb) {
@@ -186,38 +136,3 @@ void keyPressed() {
     }
   }
 }
-
-
-void keyReleased() {
-  skinKirb = #E3ABB5;
-  armsUp = false;
-}
-
-void mousePressed() {
-  // push kirby away from mouse position
-  float dx = xKirb - mouseX;
-  float dy = yKirb - mouseY;
-  float length = dist(xKirb, yKirb, mouseX, mouseY);
-
-  if (length > 0) {
-    xDirection = dx / length;
-    yDirection = dy / length;
-  }
-
-  spinKirb *= -1;  // flip kirby's spin
-  armsUp = true;   // raise arms
-}
-
-void mouseReleased() {
-  armsUp = false;
-}
-
-/* Personal Checklist
- - Does it run? YEs
- - Does it use setup and draw?? Yes
- - Does it use 2d shapes (YES), variables(YES), arithmetic(YES), if statements (YES), loops(YES), event handlers (YES)... All yes
- - Meet minimum requuirements? Yes
- - Movement? Yes i have mouse pressed functions and WASD movement.. it also float randomly by itself bouncing off the walls
- - User input? Yes i have so mouse pressed and WASD interacts with the animation and any key pressed (though it should be WASD) switches colour of kirb making it a mouse game having to keep the mouse in kirb while moving it around the screen progressively geting faster
- - Design and style? Yes, i used camel casing and using event handlers to clearly seperate parts of my code to be easy to use later.. i also spammed control T to insure the best formatting
- */
